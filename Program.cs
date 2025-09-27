@@ -4,7 +4,7 @@ List<int[]> History = [];
 
 while (true)
 {
-    Console.WriteLine("1. add\n2. sub\n3. mul\n4. div\n5. history:");
+    Console.WriteLine("1. add\n2. sub\n3. mul\n4. div\n5. history\n6. random");
 
     string? input = Console.ReadLine();
     if (!int.TryParse(input, out int mode))
@@ -23,13 +23,13 @@ while (true)
 
 }
 
-void Game(int mode, bool randomMode = false)
+void Game(int mode)
 {
     // start timer
-    var sw = System.Diagnostics.Stopwatch.StartNew();
+    System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
     string[] operation = ["+", "-", "*", "/"];
     Random r = new();
-    if (randomMode)
+    if (mode == 6)
     {
         mode = r.Next(0, 4);
     }
