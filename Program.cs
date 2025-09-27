@@ -25,6 +25,8 @@ while (true)
 
 void Game(int mode, bool randomMode = false)
 {
+    // start timer
+    var sw = System.Diagnostics.Stopwatch.StartNew();
     string[] operation = ["+", "-", "*", "/"];
     Random r = new();
     if (randomMode)
@@ -59,6 +61,8 @@ void Game(int mode, bool randomMode = false)
         Console.WriteLine("not number, try again");
     }
 
+    // end timer
+    sw.Stop();
     if (Validate(a, b, mode, answer))
     {
         Console.WriteLine("correct");
@@ -68,6 +72,7 @@ void Game(int mode, bool randomMode = false)
         Console.WriteLine("false");
     }
     History.Add([a, b, mode, answer]);
+    Console.WriteLine($"{(float)sw.ElapsedMilliseconds / 1000} seconds");
     Console.WriteLine("enter to continue");
     _ = Console.ReadLine();
 }
