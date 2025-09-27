@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "GwJu32IcjlM=",
+  "success": true,
+  "projectFilePath": "/home/esaiy/git/csharp/MathGame/MathGame.csproj",
+  "expectedPackageFiles": [
+    "/home/esaiy/.nuget/packages/microsoft.aspnetcore.app.ref/9.0.9/microsoft.aspnetcore.app.ref.9.0.9.nupkg.sha512"
+  ],
+  "logs": []
+}
