@@ -1,23 +1,33 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
-List<int[]> History = [];
+﻿List<int[]> History = [];
 List<int> NonPrimeNumbers = GenerateNonPrimes();
 List<int> dividends = GenerateDividends();
 
 while (true)
 {
-    Console.WriteLine("1. add\n2. sub\n3. mul\n4. div\n5. history\n6. random");
+    Console.Clear();
+    Console.WriteLine("Welcome to THE Math Game");
+    Console.WriteLine("Choose game mode:");
+    Console.WriteLine("1. Addition");
+    Console.WriteLine("2. Subtraction");
+    Console.WriteLine("3. Multiplication");
+    Console.WriteLine("4. Division");
+    Console.WriteLine("5. Random Mode");
+    Console.WriteLine("6. Show Game History");
 
     string? input = Console.ReadLine();
     if (!int.TryParse(input, out int mode))
     {
-        Console.WriteLine("not number");
+        Console.WriteLine("Invalid input. Please input a valid mode.");
+        Console.WriteLine("Press enter to continue.");
+        _ = Console.ReadLine();
         continue;
     }
 
-    if (mode == 5)
+    if (mode == 6)
     {
         PrintHistory();
+        Console.WriteLine("Press enter to continue.");
+        _ = Console.ReadLine();
         continue;
     }
 
@@ -31,30 +41,36 @@ void Game(int mode)
     System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
     string[] operation = ["+", "-", "*", "/"];
     Random r = new();
-    if (mode == 6)
+    if (mode == 5)
     {
         mode = r.Next(1, 5);
     }
 
     if (mode is < 0 or > 4)
     {
-        Console.WriteLine("invalid mode");
+        Console.WriteLine("Unknown mode. Please input a valid mode:");
         return;
     }
 
     int difficulty;
     do
     {
-        Console.WriteLine("input diff:");
+        Console.WriteLine("Here are the difficulty options:");
+        Console.WriteLine("1. Easy");
+        Console.WriteLine("2. Normal");
+        Console.WriteLine("3. Hard");
+        Console.WriteLine("Choose your difficulty:");
+
         string? input = Console.ReadLine();
         if (!int.TryParse(input, out difficulty))
         {
-            Console.WriteLine("invalid");
+            Console.WriteLine("Invalid difficulty. Please input a valid difficulty.");
             continue;
         }
+
         if (difficulty is < 1 or > 3)
         {
-            Console.WriteLine("invalid diff");
+            Console.WriteLine("Unknown difficulty. Please input a valid difficulty.");
         }
     } while (difficulty is < 1 or > 3);
 
@@ -85,27 +101,30 @@ void Game(int mode)
         {
             break;
         }
-        Console.WriteLine("not number, try again");
+        Console.WriteLine("Your answer is not a valid number. Please answer with whole number.");
     }
 
     // end timer
     sw.Stop();
+
+    int isCorrect = 0;
     if (Validate(a, b, mode, answer))
     {
-        Console.Write("correct");
+        isCorrect = 1;
+        Console.Write("Correct!");
         if (isTimed && sw.ElapsedMilliseconds > 10 * 1000)
         {
-            Console.Write(", but timeout");
+            Console.Write($" But you took {(float)sw.ElapsedMilliseconds / 1000} seconds to answer and ran out of time");
         }
         Console.WriteLine();
     }
     else
     {
-        Console.WriteLine("false");
+        Console.WriteLine("Wrong :(");
+        Console.WriteLine("Try harder next time");
     }
-    History.Add([a, b, mode, answer]);
-    Console.WriteLine($"{(float)sw.ElapsedMilliseconds / 1000} seconds");
-    Console.WriteLine("enter to continue");
+    History.Add([a, b, mode, answer, difficulty, isCorrect]);
+    Console.WriteLine("Press enter to continue.");
     _ = Console.ReadLine();
 }
 
@@ -142,16 +161,21 @@ bool Validate(int a, int b, int mode, int answer)
 
 void PrintHistory()
 {
+    string[] difficulty = ["Easy", "Normal", "Hard"];
     if (History.Count == 0)
     {
-        Console.WriteLine("no history");
+        Console.WriteLine("No recorded game history.");
         return;
     }
 
+    Console.WriteLine("Here are your game histories:");
     foreach (int[] item in History)
     {
         string[] operation = ["+", "-", "*", "/"];
-        Console.WriteLine($"{item[0]} {operation[item[2] - 1]} {item[1]} = {item[3]}");
+        string result = item[5] == 1 ? "correct" : "incorrect";
+        Console.WriteLine($"- {item[0]} {operation[item[2] - 1]} {item[1]} = {item[3]}");
+        Console.WriteLine($"  Difficulty: {difficulty[item[4] - 1]}");
+        Console.WriteLine($"  Result: {result}");
     }
 }
 
