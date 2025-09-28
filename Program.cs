@@ -80,6 +80,7 @@ void Game(int mode)
 
     bool isHard = false;
     bool isTimed = false;
+
     if (difficulty == 2)
     {
         isHard = true;
@@ -138,12 +139,12 @@ void Game(int mode)
     _ = Console.ReadLine();
 }
 
-List<int> GeneratePossibleDivider(int a, bool isHard)
+List<int> GeneratePossibleDivider(int dividend, bool isHard)
 {
     List<int> result = [];
-    for (int i = a; i >= 1; i--)
+    for (int i = dividend; i >= 1; i--)
     {
-        if (a % i == 0)
+        if (dividend % i == 0)
         {
             result.Add(i);
         }
@@ -171,6 +172,8 @@ bool Validate(int a, int b, int mode, int answer)
 void PrintHistory()
 {
     string[] difficulty = ["Easy", "Normal", "Hard"];
+    string[] operation = ["+", "-", "*", "/"];
+
     if (History.Count == 0)
     {
         Console.WriteLine("No recorded game history.");
@@ -178,9 +181,9 @@ void PrintHistory()
     }
 
     Console.WriteLine("Here are your game histories:");
+
     foreach (int[] item in History)
     {
-        string[] operation = ["+", "-", "*", "/"];
         string result = item[5] == 1 ? "correct" : "incorrect";
         Console.WriteLine($"- {item[0]} {operation[item[2] - 1]} {item[1]} = {item[3]}");
         Console.WriteLine($"  Difficulty: {difficulty[item[4] - 1]}");
@@ -203,6 +206,7 @@ int[] GenerateArithmetic(bool isHard)
 {
     int lowerBound = 0;
     int upperBound = 100;
+
     if (isHard)
     {
         lowerBound = 100;
@@ -220,6 +224,7 @@ int[] GenerateMultiplication(bool isHard)
 {
     int lowerBound = 0;
     int upperBound = 11;
+
     if (isHard)
     {
         lowerBound = 11;
@@ -235,9 +240,9 @@ int[] GenerateMultiplication(bool isHard)
 
 int[] GenerateDivision(bool isHard)
 {
-
     int lowerBound = 0;
     List<int> dividendList = dividends;
+
     if (isHard)
     {
         dividendList = NonPrimeNumbers;
@@ -249,8 +254,7 @@ int[] GenerateDivision(bool isHard)
     int b;
 
     List<int> possibleDivider = GeneratePossibleDivider(a, isHard);
-    b = r.Next(0, possibleDivider.Count);
-    b = possibleDivider[b];
+    b = possibleDivider[r.Next(0, possibleDivider.Count)];
 
     return [a, b];
 }
