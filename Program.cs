@@ -1,6 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
 List<int[]> History = [];
+List<int> NonPrimeNumbers = GenerateNonPrimes();
+List<int> dividends = GenerateDividends();
 
 while (true)
 {
@@ -31,7 +33,7 @@ void Game(int mode)
     Random r = new();
     if (mode == 6)
     {
-        mode = r.Next(0, 4);
+        mode = r.Next(1, 5);
     }
 
     if (mode is < 0 or > 4)
@@ -40,14 +42,39 @@ void Game(int mode)
         return;
     }
 
-    int a = r.Next(101);
-    int b = r.Next(101);
-    if (mode == 4)
+    int difficulty;
+    do
     {
-        List<int> possible = Possible(a);
-        b = r.Next(0, possible.Count);
-        b = possible[b];
+        Console.WriteLine("input diff:");
+        string? input = Console.ReadLine();
+        if (!int.TryParse(input, out difficulty))
+        {
+            Console.WriteLine("invalid");
+            continue;
+        }
+        if (difficulty is < 1 or > 3)
+        {
+            Console.WriteLine("invalid diff");
+        }
+    } while (difficulty is < 1 or > 3);
+
+    bool isHard = false;
+    bool isTimed = false;
+    if (difficulty == 2)
+    {
+        isHard = true;
     }
+
+    if (difficulty == 3)
+    {
+
+        isHard = true;
+        isTimed = true;
+    }
+
+    int[] operand = GenerateOperand(mode, isHard);
+    int a = operand[0];
+    int b = operand[1];
 
     Console.Write($"{a} {operation[mode - 1]} {b} = ");
     int answer;
@@ -65,7 +92,12 @@ void Game(int mode)
     sw.Stop();
     if (Validate(a, b, mode, answer))
     {
-        Console.WriteLine("correct");
+        Console.Write("correct");
+        if (isTimed && sw.ElapsedMilliseconds > 10 * 1000)
+        {
+            Console.Write(", but timeout");
+        }
+        Console.WriteLine();
     }
     else
     {
@@ -77,7 +109,7 @@ void Game(int mode)
     _ = Console.ReadLine();
 }
 
-List<int> Possible(int a)
+List<int> Possible(int a, bool isHard)
 {
     List<int> result = [];
     for (int i = a; i >= 1; i--)
@@ -87,6 +119,11 @@ List<int> Possible(int a)
             Console.WriteLine(i);
             result.Add(i);
         }
+    }
+    if (isHard)
+    {
+        result.RemoveAt(0);
+        result.RemoveAt(result.Count - 1);
     }
     return result;
 }
@@ -118,3 +155,113 @@ void PrintHistory()
     }
 }
 
+int[] GenerateOperand(int mode, bool isHard = false)
+{
+    return mode switch
+    {
+        1 or 2 => GenerateArithmetic(isHard),
+        3 => GenerateMultiplication(isHard),
+        4 => GenerateDivision(isHard),
+        _ => [0, 0],
+    };
+}
+
+int[] GenerateArithmetic(bool isHard)
+{
+    int lowerBound = 0;
+    int upperBound = 100;
+    if (isHard)
+    {
+        lowerBound = 100;
+        upperBound = 1000;
+    }
+
+    Random r = new();
+    int a = r.Next(lowerBound, upperBound);
+    int b = r.Next(lowerBound, upperBound);
+
+    return [a, b];
+}
+
+int[] GenerateMultiplication(bool isHard)
+{
+    int lowerBound = 0;
+    int upperBound = 11;
+    if (isHard)
+    {
+        lowerBound = 11;
+        upperBound = 21;
+    }
+
+    Random r = new();
+    int a = r.Next(lowerBound, upperBound);
+    int b = r.Next(lowerBound, upperBound);
+
+    return [a, b];
+}
+
+int[] GenerateDivision(bool isHard)
+{
+
+    int lowerBound = 0;
+    List<int> dividendList = dividends;
+    if (isHard)
+    {
+        dividendList = NonPrimeNumbers;
+    }
+    int upperBound = dividendList.Count + 1;
+
+    Random r = new();
+    int a = dividendList[r.Next(lowerBound, upperBound)];
+    int b;
+
+    List<int> possible = Possible(a, isHard);
+    b = r.Next(0, possible.Count);
+    b = possible[b];
+
+    return [a, b];
+}
+
+List<int> GenerateNonPrimes()
+{
+    int limit = 100;
+    bool[] isPrime = new bool[limit + 1];
+
+    for (int i = 2; i <= limit; i++)
+    {
+        isPrime[i] = true;
+    }
+
+    for (int i = 2; i * i <= limit; i++)
+    {
+        if (isPrime[i])
+        {
+            for (int j = i * i; j <= limit; j += i)
+            {
+                isPrime[j] = false;
+            }
+        }
+    }
+
+    List<int> nonPrimes = [];
+    for (int i = 2; i <= limit; i++)
+    {
+        if (!isPrime[i])
+        {
+            nonPrimes.Add(i);
+        }
+    }
+
+    return nonPrimes;
+}
+
+List<int> GenerateDividends()
+{
+    List<int> result = [];
+    for (int i = 0; i <= 100; i++)
+    {
+        result.Add(i);
+    }
+
+    return result;
+}
