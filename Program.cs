@@ -13,6 +13,7 @@ while (true)
     Console.WriteLine("4. Division");
     Console.WriteLine("5. Random Mode");
     Console.WriteLine("6. Show Game History");
+    Console.WriteLine("7. Exit Game");
 
     string? input = Console.ReadLine();
     if (!int.TryParse(input, out int mode))
@@ -31,14 +32,17 @@ while (true)
         continue;
     }
 
-    Game(mode);
+    if (mode == 7)
+    {
+        Console.WriteLine("GG");
+        return;
+    }
 
+    Game(mode);
 }
 
 void Game(int mode)
 {
-    // start timer
-    System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
     string[] operation = ["+", "-", "*", "/"];
     Random r = new();
     if (mode == 5)
@@ -93,6 +97,10 @@ void Game(int mode)
     int b = operand[1];
 
     Console.Write($"{a} {operation[mode - 1]} {b} = ");
+
+    // start timer
+    System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
     int answer;
     while (true)
     {
@@ -123,19 +131,20 @@ void Game(int mode)
         Console.WriteLine("Wrong :(");
         Console.WriteLine("Try harder next time");
     }
+
     History.Add([a, b, mode, answer, difficulty, isCorrect]);
+
     Console.WriteLine("Press enter to continue.");
     _ = Console.ReadLine();
 }
 
-List<int> Possible(int a, bool isHard)
+List<int> GeneratePossibleDivider(int a, bool isHard)
 {
     List<int> result = [];
     for (int i = a; i >= 1; i--)
     {
         if (a % i == 0)
         {
-            Console.WriteLine(i);
             result.Add(i);
         }
     }
@@ -239,9 +248,9 @@ int[] GenerateDivision(bool isHard)
     int a = dividendList[r.Next(lowerBound, upperBound)];
     int b;
 
-    List<int> possible = Possible(a, isHard);
-    b = r.Next(0, possible.Count);
-    b = possible[b];
+    List<int> possibleDivider = GeneratePossibleDivider(a, isHard);
+    b = r.Next(0, possibleDivider.Count);
+    b = possibleDivider[b];
 
     return [a, b];
 }
